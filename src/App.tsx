@@ -14,7 +14,7 @@ function App() {
   const profile = useGameStore((state) => state.profile);
 
   return (
-    <Router>
+    <Router basename="/251106-vibe">
       <Routes>
         <Route path="/" element={profile ? <Navigate to="/home" /> : <Welcome />} />
         <Route path="/home" element={profile ? <Home /> : <Navigate to="/" />} />
