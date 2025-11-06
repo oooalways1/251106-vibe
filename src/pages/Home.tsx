@@ -5,7 +5,6 @@ import { useGameStore } from '../store/useGameStore';
 const Home = () => {
   const navigate = useNavigate();
   const profile = useGameStore((state) => state.profile);
-  const updateProfile = useGameStore((state) => state.updateProfile);
 
   if (!profile) return null;
 
