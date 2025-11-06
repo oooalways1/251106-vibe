@@ -5,8 +5,16 @@ import { useGameStore } from '../store/useGameStore';
 const Home = () => {
   const navigate = useNavigate();
   const profile = useGameStore((state) => state.profile);
+  const updateProfile = useGameStore((state) => state.updateProfile);
 
   if (!profile) return null;
+
+  const handleNewUser = () => {
+    if (window.confirm('현재 데이터를 초기화하고 새로운 사용자로 시작하시겠습니까?')) {
+      localStorage.clear();
+      window.location.href = '/251106-vibe/';
+    }
+  };
 
   const menuItems = [
     {
@@ -161,6 +169,31 @@ const Home = () => {
             </div>
           </motion.div>
         )}
+
+        {/* 새로운 사용자로 시작하기 버튼 */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.6 }}
+          className="card mt-8 bg-gradient-to-br from-gray-50 to-gray-100 border-2 border-gray-300"
+        >
+          <div className="text-center">
+            <h2 className="text-xl font-bold text-gray-800 mb-2">
+              다른 사람이 사용하시나요? 👥
+            </h2>
+            <p className="text-gray-600 mb-4">
+              새로운 사용자로 시작하면 현재 데이터가 초기화됩니다.
+            </p>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={handleNewUser}
+              className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-3 px-6 rounded-2xl shadow-lg transition-all duration-200"
+            >
+              🔄 새로운 사용자로 시작하기
+            </motion.button>
+          </div>
+        </motion.div>
       </div>
     </div>
   );
