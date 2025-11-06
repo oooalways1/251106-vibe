@@ -1,0 +1,171 @@
+import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { useGameStore } from '../store/useGameStore';
+
+const Home = () => {
+  const navigate = useNavigate();
+  const profile = useGameStore((state) => state.profile);
+
+  if (!profile) return null;
+
+  const menuItems = [
+    {
+      title: '연습 모드',
+      description: '곱셈과 나눗셈을 자유롭게 연습해요',
+      icon: '📝',
+      color: 'from-blue-400 to-blue-600',
+      path: '/practice',
+    },
+    {
+      title: '학습 대시보드',
+      description: '내 학습 기록을 확인해요',
+      icon: '📊',
+      color: 'from-green-400 to-green-600',
+      path: '/dashboard',
+    },
+    {
+      title: '아이템 상점',
+      description: '코인으로 아이템을 구매해요',
+      icon: '🛒',
+      color: 'from-purple-400 to-purple-600',
+      path: '/shop',
+    },
+    {
+      title: '업적',
+      description: '달성한 업적을 확인해요',
+      icon: '🏆',
+      color: 'from-yellow-400 to-yellow-600',
+      path: '/achievements',
+    },
+    {
+      title: '오답 노트',
+      description: '틀린 문제를 다시 풀어봐요',
+      icon: '📔',
+      color: 'from-red-400 to-red-600',
+      path: '/wrong-answers',
+    },
+  ];
+
+  return (
+    <div className="min-h-screen p-4 md:p-8">
+      <div className="max-w-6xl mx-auto">
+        {/* 헤더 */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="card mb-8"
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="text-6xl">{profile.character.avatar}</div>
+              <div>
+                <h1 className="text-3xl font-bold text-gray-800">
+                  안녕하세요, {profile.name}님! 👋
+                </h1>
+                <p className="text-gray-600 mt-1">
+                  레벨 {profile.character.level} • 경험치 {profile.character.experience}
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-6">
+              <div className="text-center">
+                <div className="text-3xl mb-1">🪙</div>
+                <div className="text-2xl font-bold text-yellow-600">{profile.coins}</div>
+                <div className="text-xs text-gray-500">코인</div>
+              </div>
+              
+              <div className="text-center">
+                <div className="text-3xl mb-1">⭐</div>
+                <div className="text-2xl font-bold text-primary-600">
+                  {profile.stats.correctAnswers}
+                </div>
+                <div className="text-xs text-gray-500">정답 수</div>
+              </div>
+              
+              <div className="text-center">
+                <div className="text-3xl mb-1">🔥</div>
+                <div className="text-2xl font-bold text-red-600">
+                  {profile.stats.dailyStreak}
+                </div>
+                <div className="text-xs text-gray-500">연속 학습</div>
+              </div>
+            </div>
+          </div>
+          
+          {/* 진행 바 */}
+          <div className="mt-6">
+            <div className="flex justify-between text-sm text-gray-600 mb-2">
+              <span>레벨 {profile.character.level}</span>
+              <span>레벨 {profile.character.level + 1}까지 {100 - (profile.character.experience % 100)} EXP</span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${(profile.character.experience % 100)}%` }}
+                transition={{ duration: 1, ease: 'easeOut' }}
+                className="bg-gradient-to-r from-primary-400 to-primary-600 h-full rounded-full"
+              />
+            </div>
+          </div>
+        </motion.div>
+
+        {/* 메뉴 그리드 */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {menuItems.map((item, index) => (
+            <motion.div
+              key={item.path}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              whileHover={{ scale: 1.05, y: -5 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => navigate(item.path)}
+              className="cursor-pointer"
+            >
+              <div className={`card bg-gradient-to-br ${item.color} text-white h-full`}>
+                <div className="text-6xl mb-4">{item.icon}</div>
+                <h3 className="text-2xl font-bold mb-2">{item.title}</h3>
+                <p className="text-white/90">{item.description}</p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* 최근 업적 */}
+        {profile.achievements.filter((a) => a.unlocked).length > 0 && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            className="card mt-8"
+          >
+            <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+              <span>🏆</span>
+              최근 달성한 업적
+            </h2>
+            <div className="flex gap-4 overflow-x-auto pb-2">
+              {profile.achievements
+                .filter((a) => a.unlocked)
+                .slice(-5)
+                .map((achievement) => (
+                  <motion.div
+                    key={achievement.id}
+                    whileHover={{ scale: 1.1 }}
+                    className="flex-shrink-0 bg-gradient-to-br from-yellow-100 to-yellow-200 rounded-xl p-4 text-center min-w-[120px]"
+                  >
+                    <div className="text-4xl mb-2">{achievement.icon}</div>
+                    <div className="text-sm font-bold text-gray-800">{achievement.title}</div>
+                  </motion.div>
+                ))}
+            </div>
+          </motion.div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default Home;
+
+
