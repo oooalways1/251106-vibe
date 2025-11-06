@@ -11,7 +11,7 @@ const Home = () => {
   const handleNewUser = () => {
     if (window.confirm('현재 데이터를 초기화하고 새로운 사용자로 시작하시겠습니까?')) {
       localStorage.clear();
-      window.location.href = '/251106-vibe/';
+      window.location.reload();
     }
   };
 
